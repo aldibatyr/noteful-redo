@@ -30,6 +30,7 @@ export default class NoteListNav extends React.Component {
         </ul>
         <div className='NoteListNav__button-wrapper'>
           <CircleButton
+            
             tag={Link}
             to='/add-folder'
             type='button'
