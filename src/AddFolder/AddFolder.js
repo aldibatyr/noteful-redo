@@ -87,5 +87,8 @@ export default class AddFolder extends React.Component{
 AddFolder.propTypes = {
   history: PropTypes.shape({
     goBack: PropTypes.func
-  })
+  }),
+  name: PropTypes.string.isRequired,
+  nameValid: PropTypes.bool.isRequired,
+  validationMessage: PropTypes.string
 }
