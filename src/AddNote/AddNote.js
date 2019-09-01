@@ -36,11 +36,14 @@ export default class AddNote extends React.Component {
   }
 
   setName(name) {
+    console.log(name)
     this.setState({name}, () => this.validateName(name));
   }
   setContent(content){
-    this.setState({content}, () => this.validateContent(content))
+    console.log(content)
+    this.setState({content}, () => this.validateContent(content));
   }
+
   validateName(name) {
     const fieldErrors = {...this.state.validationMessages};
     this.nameValid = true;
@@ -57,32 +60,35 @@ export default class AddNote extends React.Component {
     }
     this.setState({validationMessages: fieldErrors, nameValid: !hasError}, this.formValid)
   }
+
   validateContent(content){
     const fieldErrors = {...this.state.validationMessages}
-    let contentValid = true;
+    this.contentValid = true;
     let hasError = false
 
-    if (content.length === 0) {
-      fieldErrors.content = 'Note content cannot be emptry';
-      contentValid = false;
-      hasError = true;
-    }
-    else {
-      if (content.length < 10) {
-        fieldErrors.content = "Note must be at least 10 characters long";
-        contentValid = false;
-        hasError = true;
-      }
+    if (content.length === 0 || content.length < 10) {
+        fieldErrors.content = "Note must be at least 10 characters long"
+        this.contentValid = false
+        hasError = true
+    } else {
       fieldErrors.content = ''
-      contentValid = true;
-      hasError = false;
+      this.contentValid = true
+      hasError = false
     }
     this.setState({validationMessages: fieldErrors, contentValid: !hasError}, this.formValid)
   }
+
   formValid() {
-    this.setState({
-      formValid: this.state.nameValid
-    });
+    if (this.state.nameValid && this.state.contentValid) {
+      return this.setState({
+        formValid: true
+      });
+    } else {
+      return this.setState({
+        formValid: false
+      })
+    }
+    
   }
   handleSubmit = e => {
     e.preventDefault()
@@ -129,7 +135,7 @@ export default class AddNote extends React.Component {
         {!folderValid && (
           <p className="error">{validationMessages.folder}</p>
         )}</label>
-        <select id="folder" type="text" name="folder">{folderArray}</select>
+        <select  id="folder" type="text" name="folder">{folderArray}</select>
           <ValidationError hasError={!this.state.nameValid} message={this.state.validationMessages.name}/>
         <label htmlFor="name">Note name
         {!nameValid && (
@@ -142,6 +148,7 @@ export default class AddNote extends React.Component {
           <p className='error'>{validationMessages.content}</p>
         )}</label>
         <input id='content' type='text' name='content' onChange={e => this.setContent(e.target.value)} ></input>
+          <ValidationError hasError={!this.state.contentValid} message={this.state.validationMessages.content}/>
         <button type="submit" disabled={!this.state.formValid}>Submit</button>
       </form>
       </Error>

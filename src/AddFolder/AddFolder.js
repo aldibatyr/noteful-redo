@@ -3,6 +3,7 @@ import config from '../config';
 import ApiContext from '../ApiContext';
 import Error from '../Error';
 import NotefulForm from '../NotefulForm/NotefulForm';
+import ValidationError from '../ValidationError/ValidationError';
 import PropTypes from 'prop-types';
 
 
@@ -13,16 +14,42 @@ export default class AddFolder extends React.Component{
     this.state = {
       name: '',
       nameValid: false,
-      validationMessage: ''
-
+      hasError: false,
+      formValid: false,
+      validationMessage: {
+        name: '',
+        content: ''
+      }
     }
   }
   
   assignFolderName = name => {
     this.setState({
       name
+    }, () => this.validateName(name))
+  }
+
+  validateName(name) {
+    const feildError = {...this.state.validationMessage};
+    this.nameValid = true;
+    let hasError = false
+
+    if (name.length === 0 || name.length < 3) {
+      feildError.name = 'Name needs to be at least 3 characters long';
+      this.nameValid = false;
+      hasError = true;
+    } else {
+      feildError.name = '';
+      this.nameValid = true;
+      hasError = false;
+    }
+    this.setState({validationMessage: feildError, nameValid: !hasError}, this.formValid)
+  }
+
+  formValid() {
+    this.setState({
+      formValid: this.state.nameValid
     })
-    console.log(this.state.folderName)
   }
 
   postFolderToAPI = e => {
@@ -58,6 +85,7 @@ export default class AddFolder extends React.Component{
   }
 
   render() {
+    let {folderValid, validationMessage} = this.state
     return (
       <Error>
         <section className='AddFolder'>
@@ -66,14 +94,19 @@ export default class AddFolder extends React.Component{
             <div className='field'>
               <label htmlFor='folder-name-input'>
                 Name
+                {!folderValid && (
+                  <p className='error'>{validationMessage.name}</p>
+                )}
               </label>
               <input
                 type='text'
                 id='folder-name-input'
-                onChange={e => this.assignFolderName(e.target.value)} />
+                onChange={e => this.assignFolderName(e.target.value)}
+                placeholder='note name' />
+              <ValidationError hasError={!this.state.nameValid} message={this.state.validationMessage.name}/>
             </div>
             <div className='buttons'>
-              <button type='submit'>
+              <button type='submit' disabled={!this.state.formValid}>
                 Add Folder
               </button>
             </div>
@@ -88,7 +121,7 @@ AddFolder.propTypes = {
   history: PropTypes.shape({
     goBack: PropTypes.func
   }),
-  name: PropTypes.string.isRequired,
-  nameValid: PropTypes.bool.isRequired,
+  name: PropTypes.string,
+  nameValid: PropTypes.bool,
   validationMessage: PropTypes.string
 }
