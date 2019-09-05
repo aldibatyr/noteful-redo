@@ -36,11 +36,9 @@ export default class AddNote extends React.Component {
   }
 
   setName(name) {
-    // console.log(name)
     this.setState({name}, () => this.validateName(name));
   }
   setContent(content){
-    // console.log(content)
     this.setState({content}, () => this.validateContent(content));
   }
 
@@ -97,7 +95,6 @@ export default class AddNote extends React.Component {
       content: this.state.content,
       folder_id: parseInt(e.target.folder.value),
     }
-    // console.log(newNote)
     fetch(`${config.API_ENDPOINT}/notes`, {
       method: 'POST',
       headers: {
