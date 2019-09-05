@@ -32,6 +32,8 @@ class App extends Component {
                 return Promise.all([notesRes.json(), foldersRes.json()]);
             })
             .then(([notes, folders]) => {
+                // console.log(notes)
+                // console.log(folders)
                 this.setState({notes, folders});
             })
             .catch(error => {
@@ -39,9 +41,9 @@ class App extends Component {
             });
     }
 
-    handleDeleteNote = (noteId) => {
+    handleDeleteNote = (note_id) => {
         this.setState({
-            notes: this.state.notes.filter(note => note.id !== noteId)
+            notes: this.state.notes.filter(note => note.id !== note_id)
         });
     };
 
@@ -60,7 +62,7 @@ class App extends Component {
     renderNavRoutes() {
         return (
             <>
-                {['/', '/folder/:folderId'].map(path => (
+                {['/', '/folder/:folder_id'].map(path => (
                     <Route
                         exact
                         key={path}
@@ -78,7 +80,7 @@ class App extends Component {
     renderMainRoutes() {
         return (
             <>
-                {['/', '/folder/:folderId'].map(path => (
+                {['/', '/folder/:folder_id'].map(path => (
                     <Route
                         exact
                         key={path}
